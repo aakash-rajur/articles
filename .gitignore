@@ -11,7 +11,7 @@ node_modules
 /coverage
 
 # production
-/build
+/nodejs-docker-image/app-ts/build
 .env
 .env.local
 .env.development.local
