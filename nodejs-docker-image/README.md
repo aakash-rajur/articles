@@ -1,4 +1,4 @@
-# production-grade node application container image
+> production-grade node.js application container image
 
 ## goals
 - reduce node js application container size by removing cache folder
