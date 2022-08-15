@@ -19,7 +19,7 @@
   Note, `bitnami/nginx` is a container from the hub that runs nginx, we'll replace this with our built image's name.
 
 ## node javascript image
-[source](https://github.com/aakash-rajur/articles/tree/main/nodejs-docker-image/app-js)
+[source](https://github.com/aakash-rajur/articles/tree/main/nodejs-container-image/app-js)
 
 ### application
 > a simple express app that spits out "hello world" on it's root path
@@ -81,7 +81,7 @@ CMD ["start"]
 - run using ```docker run -it --rm -p 3000:3000 app-js```
 
 ## node typescript image
-[source](https://github.com/aakash-rajur/articles/tree/main/nodejs-docker-image/app-ts)
+[source](https://github.com/aakash-rajur/articles/tree/main/nodejs-container-image/app-ts)
 
 ### application
 > a simple express app that spits out "hello world" on it's root path
