@@ -1,4 +1,7 @@
 # framework for critical thinking
+
+standard thought framework towards approaching most problems professionally and personally
+
 **disclaimer**: this is my understanding at this point in time!
 
 ## context
