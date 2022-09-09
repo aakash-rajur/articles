@@ -37,7 +37,7 @@ standard thought framework towards approaching most problems professionally and 
 1. break down our plan into concise and simple steps for everyone executing to understand
 2. delegation of tasks to owner depending upon strengths and weaknesses of stakeholder
 3. expect respective task owners to provide time estimation, execution details, review and feedback mechanism
-4. for additional redundancy, each task may have one or more backup tasks that need to executed in succession
+4. for additional redundancy, each task may have one or more backup tasks that need to be executed in succession
 5. for arbitrarily risky solutions, further rollback or cut-loss solution have to be defined with same template to   
    mitigate risks as much as possible
 
@@ -56,7 +56,7 @@ standard thought framework towards approaching most problems professionally and 
 
 **Q: Is it tedious to practice?**
 
-**A:** absolutely 😅. Do also note that after you're own formulation, we need to communicate this elaborate scheme to our **group** and later ensure delegation and execution is as close as possible to the plan.
+**A:** absolutely 😅. Do also note that after your own formulation, we need to communicate this elaborate scheme to our **group** and later ensure delegation and execution is as close as possible to the plan.
 
 **Q: Is it possible to get it right?**
 
