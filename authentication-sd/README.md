@@ -38,9 +38,9 @@
 11. if `current_time` is greater than expiry time plus grace period, user is logged out. send appropriate response to
     the client
 12. if `current_time` is greater than expiry time, but less than expiry time plus grace period
-  1. re-identify user
-  2. upon failure, logout
-  3. upon success, regenerate session token and renew expiry
+    1. re-identify user
+    2. upon failure, logout
+    3. upon success, regenerate session token and renew expiry
 13. if `current_time` is less than expiry time, session is valid. continue with the request
 
 ## design choices
