@@ -13,9 +13,7 @@
 ## constraints
 
 - session has to be verified for validity and expiry on every request
-- a typical system also has role and a set of permissions associated with that role or user,
-  which is used to authorize the user to perform certain actions.
-  retrieval of this permission occurs on every request and has to be quick.
+- a typical system also has role and a set of permissions associated with that role or user, which is used to authorize the user to perform certain actions. retrieval of this permission occurs on every request and has to be quick.
 - session token should be opaque to the client and
   should not contain any information that can be used to identify the user
 - session token should be cryptographically secure and
