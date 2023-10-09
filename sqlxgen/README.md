@@ -10,7 +10,7 @@ It provides a thin wrapper around the standard library's `database/sql` package 
 and provides convenience methods for working with the database.
 
 #### table
-```postgresql
+```sql
 create table if not exists movies (
   id serial not null,
   title text not null default '',
@@ -391,7 +391,7 @@ RETURNING
 
 #### query
 for the following `list-movies.sql` file:
-```postgresql
+```sql
 select
 count(*) over () as "totalRecordsCount",
 m.id as "id",
