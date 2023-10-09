@@ -1,8 +1,4 @@
-# Databases with Sqlx
-
-## Goals
-1. Demonstrate the current paradigm for working with databases in Go using [sqlx](https://github.com/jmoiron/sqlx).
-2. Introduce [sqlxgen](https://github.com/aakash-rajur/sqlxgen), self-authored tool to generate boilerplate code required around [sqlx](https://github.com/jmoiron/sqlx).
+# Databases in GoLang
 
 ## sqlx
 [sqlx](https://github.com/jmoiron/sqlx) is a very popular library for working with databases in Go. 
