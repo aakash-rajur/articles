@@ -11,7 +11,7 @@ and provides convenience methods for working with the database.
 
 ## sqlxgen
 
-[sqlxgen](https://github.com/aakash-rajur/sqlxgen) is a cli tool for generating the 
+[sqlxgen](https://github.com/aakash-rajur/sqlxgen) is a sqlx accompanying cli tool (self-authored) for generating the 
 aforementioned boilerplate code around `sqlx`.
 
 ### features
