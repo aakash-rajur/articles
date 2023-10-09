@@ -11,8 +11,7 @@ and provides convenience methods for working with the database.
 
 ## sqlxgen
 
-[sqlxgen](https://github.com/aakash-rajur/sqlxgen) is a sqlx accompanying cli tool (self-authored) for generating the 
-aforementioned boilerplate code around `sqlx`.
+[sqlxgen](https://github.com/aakash-rajur/sqlxgen) is a sqlx accompanying cli tool (self-authored) for generating boilerplate code around `sqlx`.
 
 ### features
 1. introspects database schema to generate `struct`s for all tables, including their respective `crud` methods.
