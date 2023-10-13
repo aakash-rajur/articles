@@ -1,105 +1,207 @@
-# Databases in GoLang
+# Simplifying Database Operations in Go with SQLxgen
 
-## sqlx
-[sqlx](https://github.com/jmoiron/sqlx) is a very popular library for working with databases in Go. 
-It provides a thin wrapper around the standard library's `database/sql` package to support marshal/unmarshal of structs, 
-and provides convenience methods for working with the database.
+When working with databases in Go, developers often find themselves writing boilerplate code to handle routine database
+operations like inserting records, updating data, finding single records, querying for multiple records, and deleting
+data. This repetitive work can be time-consuming and error-prone. That's where SQLxgen comes to the rescue.
 
-> as minimal and out of the way as `sqlx` is,
-> it still requires a lot of boilerplate code to be written.
-> can we do better?
+**SQLxgen** is a command-line tool written in Go that simplifies database access by automating the generation of code
+for standard CRUD (Create, Read, Update, Delete) operations. Upon invoking the 'generate' command, SQLxgen performs
+several key tasks to streamline database operations:
 
-## sqlxgen
+1. **Model Struct Generation**: SQLxgen introspects your database to automatically generate model structs with valid
+   struct tags. These model structs are designed to map to your database tables, making it easy to work with database
+   records in a type-safe manner.
 
-[sqlxgen](https://github.com/aakash-rajur/sqlxgen) is a sqlx accompanying cli tool (self-authored) for generating boilerplate code around `sqlx`.
+2. **Store APIs Generation**: In addition to model structs, SQLxgen generates standard store APIs for common database
+   operations, including inserting records, updating data, finding single records, querying for multiple records, and
+   deleting data. These APIs are ready to use, saving you from writing boilerplate code.
 
-### features
-1. introspects database schema to generate `struct`s for all tables, including their respective `crud` methods.
-2. discover sql files in configured directories and generate argument and result `struct`s for them, 
-   along with all the necessary plumbing code.
-3. runs a modified version of your query to not return any actual result, thus allowing to find accurate return types.
-4. supports `postgres` and `mysql` databases.
+3. **Query File Discovery**: SQLxgen scans your project to discover nested SQL files. It then runs modified versions of
+   these queries to avoid fetching rows. As a result, it generates input and output structs, along with a simple API to
+   invoke these queries. Since the queries run within the database, the output structs have accurate typings.
 
-### usage
-#### install
-```shell
-# homebrew
-brew install aakash-rajur/tap/sqlxgen
+4. **JSON Aggregation**: SQLxgen provides the ability to hint JSON aggregation with comments in your query files. These
+   comments help determine whether an output field should be treated as an array or struct, enhancing the generated
+   code's accuracy.
 
-# from source
-go install -v github.com/aakash-rajur/sqlxgen/cmd/sqlxgen@latest
+The ability to automatically generate code for model structs, store APIs, and database queries significantly reduces the
+time and effort required to interact with your database. This results in more efficient and maintainable database access
+in your Go applications.
+
+## Getting Started
+
+To get started with SQLxgen and experience the benefits of streamlined database operations in Go, check out
+the [GitHub repository](https://github.com/aakash-rajur/sqlxgen) for detailed documentation and installation
+instructions.
+
+## Example
+
+### model
+
+`actor table`
+
+```sql
+CREATE TABLE public.actors
+(
+    id          integer               NOT NULL,
+    name        text DEFAULT ''::text NOT NULL,
+    name_search tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, name)) STORED
+);
 ```
 
-#### generate
-```shell
-# in your project directory, generate sqlxgen.yml
-sqlxgen init
+generates `actor.gen.go`
 
-# edit sqlxgen.yml to update database connection details
-# generate table model and query model code
-sqlxgen generate
+```go
+package example
+
+type Actor struct {
+	Id         *int32  `db:"id" json:"id"`
+	Name       *string `db:"name" json:"name"`
+	NameSearch *string `db:"name_search" json:"name_search"`
+}
+
+func (actor Actor) String() string {
+	/* skipping for example */
+	return ""
+}
+
+// language=postgresql
+var actorInsertSql = `
+-- generated, skipping for example
+`
+
+// language=postgresql
+var actorUpdateSql = `
+-- generated, skipping for example
+`
+
+// language=postgresql
+var actorFindSql = `
+-- generated, skipping for example
+`
+
+// language=postgresql
+var actorFindAllSql = `
+-- generated, skipping for example
+`
+
+// language=postgresql
+var actorDeleteSql = `
+-- generated, skipping for example
+`
 ```
 
-#### sqlxgen.yml
-```yaml
-# will expand variables from environment and .env file
-version: 1
+#### usage
 
-log:
-  level: info # debug, info, warn, error
-  format: text # json, text
+```go
+package main
 
-configs:
-  - name: tmdb_pg # name of this config
-    engine: postgres # postgres, mysql
-    database:
-      # either provide url or host, host takes precedence
-      url: "${TMDB_PG_URL}"
-      host: "${TMDB_PG_HOST}"
-      port: "${TMDB_PG_PORT}"
-      db: "${TMDB_PG_DATABASE}"
-      user: "${TMDB_PG_USER}"
-      password: "${TMDB_PG_PASSWORD}"
-      sslmode: "${TMDB_PG_SSLMODE}"
-    source:
-      models:
-        schemas:
-          - public
-        # array of go regex pattern, empty means all, e.g. ["^.+$"]
-        include: []
-        # array of go regex pattern, empty means none e.g. ["^public\.migrations*"]
-        exclude:
-          - "^public.migrations$"
-      queries:
-        paths:
-          - internal/api
-        # array of go regex pattern, empty means all e.g. ["^[a-zA-Z0-9_]*.sql$"]
-        include: []
-        # array of go regex pattern, empty means none e.g. ["^migrations*.sql$"]
-        exclude: []
-    gen:
-      store:
-        path: internal/store
-      models:
-        path: internal/models
+import (
+	"fmt"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/aakash-rajur/example/models"
+	"github.com/aakash-rajur/example/store"
+)
+
+func main() {
+	db, _ := sqlx.Connect("postgres", "...")
+
+	tx, _ := db.Beginx()
+
+	actor := models.Actor{
+		Name: utils.PointerTo("John Doe"),
+	}
+
+	_ = store.Insert(tx, &actor)
+
+	// actor.Id is now populated
+	fmt.Println(actor)
+}
+
 ```
 
-## alternatives
+### query
 
-### sqlc
-[sqlc](https://github.com/sqlc-dev/sqlc) is a popular tool to generate type-safe code from SQL, while sqlc has been an inspiration, 
-following concerns led me to author `sqlxgen`:
+`get-actor.sql`
 
-1. dumps all generated code in a single place, not allowing me to organize my code more contextually. 
-2. does not introspect my queries through database unless I type cast my selects explicitly.
-3. introduces sqlc [syntax](https://docs.sqlc.dev/en/latest/howto/named_parameters.html#nullable-parameters) for 
-   writing queries, which is not sql. Fine in most cases but if i want to run that query in my database client, 
-   i have to rewrite it.
-4. does not generate crud operations for my tables.
+```sql
+select a."id"   as "id",
+       a."name" as "name",
+       coalesce(
+               (select jsonb_agg(
+                               jsonb_build_object(
+                                       'id', ma.movie_id,
+                                       'title', m.title,
+                                       'releaseDate', m.release_date,
+                                       'character', ma.character
+                                   ) order by m.release_date desc
+                           )
+                from movies_actors ma
+                         inner join movies m on ma.movie_id = m.id
+                where true
+                  and ma.actor_id = a.id),
+               '[]'
+           )    as "movies"
+from actors a
+where a.id = :id; -- :id type: bigint
+```
 
-### gorm
-[gorm](https://gorm.io/) is a popular orm for working with databases in Go.
+`get_actor.gen.go`
 
-### sqlboiler
-[sqlboiler](https://github.com/volatiletech/sqlboiler) Generate a Go ORM tailored to your database schema.
+```go
+package example
 
+import (
+	_ "embed"
+	"fmt"
+	"strings"
+
+	"github.com/aakash-rajur/example/store"
+)
+
+type GetActorArgs struct {
+	Id *int64 `db:"id" json:"id"`
+}
+
+func (args GetActorArgs) Sql() string {
+	return getActorSql
+}
+
+func (args GetActorArgs) Query(db store.Database) ([]GetActorResult, error) {
+	return store.Query[GetActorResult](db, args)
+}
+
+type GetActorResult struct {
+	Id     *int32           `db:"id" json:"id"`
+	Movies *store.JsonArray `db:"movies" json:"movies"`
+	Name   *string          `db:"name" json:"name"`
+}
+```
+
+#### usage
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/aakash-rajur/example/api"
+	"github.com/aakash-rajur/example/store"
+)
+
+func main() {
+	db, _ := sqlx.Connect("postgres", "...")
+
+	tx, _ := db.Beginx()
+
+	actorArgs := api.GetActorArgs{Id: utils.PointerTo[int64](1)}
+
+	actorResults, _ := actorArgs.Query(tx)
+
+	fmt.Println(actorResults)
+}
+
+```
