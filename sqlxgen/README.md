@@ -39,18 +39,15 @@ instructions.
 ### model
 
 `actor table`
-
 ```sql
-CREATE TABLE public.actors
-(
-    id          integer               NOT NULL,
-    name        text DEFAULT ''::text NOT NULL,
+CREATE TABLE public.actors (
+    id integer NOT NULL,
+    name text DEFAULT ''::text NOT NULL,
     name_search tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, name)) STORED
 );
 ```
 
 generates `actor.gen.go`
-
 ```go
 package example
 
@@ -124,31 +121,33 @@ func main() {
 ### query
 
 `get-actor.sql`
-
 ```sql
-select a."id"   as "id",
-       a."name" as "name",
-       coalesce(
-               (select jsonb_agg(
-                               jsonb_build_object(
-                                       'id', ma.movie_id,
-                                       'title', m.title,
-                                       'releaseDate', m.release_date,
-                                       'character', ma.character
-                                   ) order by m.release_date desc
-                           )
-                from movies_actors ma
-                         inner join movies m on ma.movie_id = m.id
-                where true
-                  and ma.actor_id = a.id),
-               '[]'
-           )    as "movies"
+select
+a."id" as "id",
+a."name" as "name",
+coalesce(
+  (
+    select
+    jsonb_agg(
+      jsonb_build_object(
+        'id', ma.movie_id,
+        'title', m.title,
+        'releaseDate', m.release_date,
+        'character', ma.character
+      ) order by m.release_date desc
+    )
+    from movies_actors ma
+    inner join movies m on ma.movie_id = m.id
+    where true
+    and ma.actor_id = a.id
+  ),
+  '[]'
+) as "movies"
 from actors a
 where a.id = :id; -- :id type: bigint
 ```
 
 `get_actor.gen.go`
-
 ```go
 package example
 
